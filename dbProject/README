@@ -1,0 +1,8 @@
+This a project created for working with mySQL, PHP, and basic HTML. The prpose of this
+project is to create the three tier achetecture and alter data in tables and display data. 
+This project utilizes a device that the connects to a web application hosted on eve.kean.edu. 
+The web application the queryies the imc.kean.edu server to request alter and prefrom functions 
+on the tables stored their. 
+
+The web adress for this site is http://eve.kean.edu/~mmirkovi/TECH3740/p2.html
+I will include all sorce file excepmy my dbconfig file due to security of login infomation being stored there. 
