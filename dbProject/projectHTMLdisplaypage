@@ -1,0 +1,34 @@
+
+<HTML>
+
+<HEAD>
+
+<TITLE>Welcome to TECH 3740 project 2</TITLE>
+</HEAD>
+<BODY>
+<br> 
+Welcome to Michael Mirkovic's TECH 3740 project phase 2.
+<br> <br>
+<UL style="margin:0;">
+<LI><a href="view_employee.php">View all employees</a>
+<br> <br>
+</UL>
+<form action="search_employee.php" method='get'>
+Enter a partial address to find employee.
+<br>
+* for listing all employee.
+<br>
+<input type="text" name='keyword' size=20 required>
+<input type="submit" value ="Search">
+</form>
+
+<br>
+<form action="login2.php" method="post">
+Employee login ID: <input type="text" name="username"  required="required" >
+<br>Password: <input type="password" name="password"  required="required" >
+<input type="submit" value="Submit">
+</form>
+
+</BODY>
+
+</HTML>
