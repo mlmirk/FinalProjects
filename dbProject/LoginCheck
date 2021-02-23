@@ -1,0 +1,110 @@
+
+<?php
+include "dbconfig.php";
+$ip= $_SERVER['REMOTE_ADDR']; 
+$IPv4= explode(".",$ip);
+echo "Your IP: $ip ";
+	if($IPv4 [0] .".". $IPv4[1] == "131.125")
+		echo "<br>You are from Kean Unvivesity\n</br>"; 
+	
+	else
+		echo"<br>You are NOT from Kean university.\n</br>"; 
+		
+$secret = "Secret string to hash";
+$browser_username =$_POST["username"];
+
+$browser_password =$_POST["password"]; 
+
+
+$con=mysqli_connect( $host , $username, $password, $dbname) or die("<br>Cannot connect to DB:$dbname on $host\n");
+
+$sql = "SELECT name, role, salary, gender, address, login, password 
+ 		FROM TECH3740.EMPLOYEE 
+ 		WHERE login='$browser_username'";
+
+			//echo "<br>Query:$sql\n";
+
+$result = mysqli_query($con,$sql); 
+
+if($result) 
+{
+	if(mysqli_num_rows($result) > 0)
+	{
+		echo "<br>$browser_username is a user in the system";
+		
+	while($row = mysqli_fetch_array($result))
+		{
+			$user_login=$row['login'];
+			$user_password=$row['password'];
+			$user_name=$row['name'];
+			$user_role=$row['role'];
+			$user_gender=$row['gender'];
+			$user_salary=$row['salary'];
+			$user_address=$row['address'];
+			if( is_null($user_salary) )
+   					{
+   						$user_salary = "NULL";
+   			
+   					}
+				if($browser_password==$user_password)
+				{
+					{
+    				setcookie('loginCookie', $_REQUEST['username'].','.md5($user_login.$secret),time()+60*60);
+    				
+  					}
+					echo"<br> Welcome $user_name .\n" ;
+					echo"\n";
+					echo"<br> login successfull.\n" ;
+						echo"\n";
+					echo "<br>login: $user_login\n";
+						echo"\n";
+					echo "<br>role: $user_role\n";
+						echo"\n";
+					echo "<br>gender: $user_gender\n";
+						echo"\n";
+					echo "<br>salary: $user_salary\n";
+						echo"\n";
+					echo "<br>adress: $user_address\n";
+						echo"\n";
+					
+										
+				}
+				else
+				{
+						echo"<br> login failed.\n" ;
+
+				}
+
+		}
+	}
+	
+else {
+	echo "<br>$browser_username is not a user in the system";
+	//to display error code
+	echo "<br> Error code: " . mysqli_error($con);
+	}
+
+} //end of if result
+mysqli_free_result($result);
+
+mysqli_close($con)
+?>
+
+<html>
+
+<br>
+
+
+<a href="add_product.php">Add products</a>
+
+<form action="display_search_products.php" method="post">
+  <label for="search"> Search product(name, description)</label></br>
+  <input type="text" name="search">
+  <input type="submit" value="Search">
+</form>
+</body>
+
+</html>
+
+
+	
