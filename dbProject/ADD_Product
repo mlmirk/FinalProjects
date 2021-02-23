@@ -1,0 +1,93 @@
+<?php
+
+include "dbconfig.php";
+$con=mysqli_connect( $host , $username, $password, $dbname) or die("<br>Cannot connect to DB:$dbname on $host\n");
+$insertResult=false; //declared to use if $insertResult isnt called when something doesnt make meet requirments 
+unset($user_login);
+
+if($_COOKIE['loginCookie']){
+  $secret =  "Secret string to hash";
+  $array =  explode(',',$_COOKIE['loginCookie'] );
+  $c_login = $array[0];
+  if(md5($c_login.$secret) == $array[1]){
+    $user_login = $c_login;
+  }
+}
+
+ 
+if($user_login){
+  if($_POST['quantity']< 1)//check if your quanitiy is greater then zero
+  {
+    echo "You cannot add a negative or zero amount for quality\n";
+    echo"\n";
+  }
+  elseif($_POST['sell_price']< 1)//check if your sell price is greater then zero
+  {
+    echo "You can not have a sell price less then zero\n";
+    echo"\n";
+  }
+  elseif($_POST['cost']<= 0)//check if your cost is greater then zero
+  {
+    echo "An Item's cost cannot be less than or equal to zero\n";
+    echo"\n";
+  }
+  elseif($_POST['cost'] > $_POST['sell_price']) //check if you are selling something for less then it costs
+  {
+    echo "The selling price cannot be less than the cost\n";
+    echo"\n";
+  }
+  else
+  {
+  $sqlName = "SELECT * from TECH3740_2020F.Products_mmirkovi where name='$_POST[name]' ";
+  $resultName = mysqli_query($con,$sqlName);
+  $existsAlready=mysqli_num_rows($resultName);
+    if($existsAlready > 0) //checking for same named items
+    {
+    echo "Cannot have the same name\n";
+
+    }
+    else//if everything is else is false then don the query
+    {
+    $sqlLog= "SELECT employee_id FROM TECH3740.EMPLOYEE  where login='$user_login' ";
+    $resultLog= mysqli_query($con,$sqlLog);
+    $row = mysqli_fetch_assoc($resultLog);
+    $insertSql = "INSERT INTO TECH3740_2020F.Products_mmirkovi (name, description, type, sell_price, cost, quantity, e_id, v_id) 
+    VALUES ('$_POST[name]','$_POST[description]','$_POST[type]', $_POST[sell_price],$_POST[cost], $_POST[quantity],  $row[employee_id],$_POST[vendor] ) ";
+
+    $insertResult= mysqli_query($con,$insertSql);
+//error testing
+    //echo "$_POST[name] ----------\n";
+//echo "$_POST[description] --------\n";
+//echo "$_POST[sell_price] --------------------------\n";
+//echo "$_POST[cost] ---------\n";
+//echo "$row[employee_id] ---------\n";
+//echo " $_POST[quantity]---------\n";
+//echo "$_POST[vendor]---------\n";
+
+
+
+    }
+    if($insertResult)
+    {
+      echo "$_POST[name] has been added successfully\n";
+      echo"\n";
+    }
+
+    else
+    {
+      echo "An error occurred when trying to enter data into the Database\n";
+      echo"\n";
+    }
+  }
+
+
+}
+
+else
+{
+  echo "You need to login if you want to insert products";
+  echo"\n";
+}
+mysqli_free_result($result);
+mysqli_close($con)
+?>
