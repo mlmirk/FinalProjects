@@ -1,1 +1,3 @@
-TBA
+This project uses python for the purpose of data visulatzaion. Using large data sets and
+figures and presenting digestable chacrts. Matplotlib PANDAS numpy and pyplot are used to create 
+charts of covid cases and viewing the stock market trends as well. 
