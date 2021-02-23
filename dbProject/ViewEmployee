@@ -1,0 +1,120 @@
+<?php
+
+include "dbconfig.php";
+
+$con=mysqli_connect( $host , $username, $password, $dbname) or die("<br>Cannot connect to DB:$dbname on $host\n");
+
+$sql= "SELECT employee_id ,login ,password , name, role, gender,Salary,  Address FROM TECH3740.EMPLOYEE" ;
+
+//echo "<br>Query:$sql\n"; // debugging
+
+
+$color = "#000000";
+
+$color2= "#000000";
+
+$total= 0;
+
+$salarycount= 0 ;
+
+$result = mysqli_query($con,$sql); 
+
+$employees = mysqli_num_rows($result);
+
+echo "There are $employees employees\n";
+
+if($result) 
+{
+
+	if(mysqli_num_rows($result) > 0)
+	{
+		echo "<TABLE border=1>\n";
+		echo"<TR><TH>employee_id <TH>login <TH> password <TH>name <TH> role
+		<TH> gender <TH> Salary<TH> Address\n";
+	while($row = mysqli_fetch_array($result))
+		{
+			$employee_id= $row["employee_id"] ;
+			
+			$login=$row["login"];
+			
+			$password= $row["password"];
+			
+			$name=$row["name"];
+			
+			$role=$row["role"];
+			
+			$gender=$row["gender"];
+			
+			$Salary=$row["Salary"];
+			
+			$Address=$row["Address"];
+
+				if ($gender =="M") 
+					{//condition for determining print color of genders
+  						 $color = "blue";//changes per iteration
+  					}
+				else                   
+   					{
+
+   						$color = "red";
+   					}
+
+   				if (is_null($Salary) )
+   					{
+   						$Salary = "NULL";
+   						
+   						$color2= "red";
+   					}
+   				else
+   					{ 
+   						$total = $total + 1 ;
+   					   
+   					    $salarycount = $salarycount + $Salary;
+                      
+                    	$color2="black";
+   					}
+
+				if ($name <>"") 
+					{
+						echo "<TR> 
+                  		<td>$employee_id</td> 
+                  		<td>$login</td> 
+                  		<td>$password</td> 
+                  		<td>$name</td> 
+                  		<td>$role</td> 
+                  		<td span style=\"color: $color\">$gender</span/td> 
+                  		<td span style=\"color: $color2\">$Salary</span/td> 
+                  		<td>$Address</td> 
+              			</TR>";
+		            }
+	
+				else 
+					{
+						"<br>no record found. \n";
+		 			}
+		
+
+		}//end while
+	
+	}//endifmyqlirows
+			echo "</TABLE> \n" ;  //close the table after the while loop ends
+}//end $result
+	else 
+{
+	echo "<br><h1> Something wrong with the QUERY: $sql</h1></br>";
+			//to display error code
+	echo "<br> Error code: " . mysqli_error($con). "</h1></br>";
+}
+if($total > 0) //avoiding a divide be zero 
+	{
+		$avg = $salarycount / $total;
+
+		$properAVG= number_format($avg, 1);
+	}
+echo "<br>Average salary: $properAVG dollars\n</br>";
+
+mysqli_free_result($result); // frees vairable from db
+
+mysqli_close($con); // frees connection from db 
+
+?>
