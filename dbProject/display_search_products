@@ -1,0 +1,192 @@
+<?php
+
+include "dbconfig.php";
+
+$con=mysqli_connect( $host , $username, $password, $dbname)
+ or die("<br>Cannot connect to DB:$dbname on $host\n");
+
+$insertResult=false; 
+
+unset($user_login);
+
+if($_COOKIE['loginCookie'])
+{
+  $secret = "Secret string to hash";
+
+  $array =explode(',',$_COOKIE['loginCookie'] );
+
+  $c_login = $array[0];
+
+  if(md5($c_login.$secret) == $array[1])
+  {
+    $user_login = $c_login;
+  }
+}
+
+
+if($_REQUEST['search'] == '*')
+{
+  echo "The following products were match search keyword *";
+
+  $sql= "SELECT * FROM TECH3740_2020F.Products_mmirkovi" ;
+
+  $resultAll = mysqli_query($con,$sql);
+
+  $products = array();
+
+  $vendorList = array();
+
+  $employees = array();
+
+  $total_profit =0.00;
+
+  while ($row = mysqli_fetch_array($resultAll)) //results for *
+  {
+    $products[] = $row;
+
+    $sqlVendor = "SELECT * from TECH3740.VENDOR where vendor_id=$row[v_id]";
+
+    $resultVendor = mysqli_query($con,$sqlVendor);
+
+    $vendor = mysqli_fetch_assoc($resultVendor);
+
+    $vendorList[$vendor['vendor_id']]=$vendor['name'];
+
+    $sqlEmp = "SELECT * from TECH3740.EMPLOYEE where employee_id=$row[e_id]";
+
+    $resultEmp = mysqli_query($con,$sqlEmp);
+
+    $employee = mysqli_fetch_assoc($resultEmp);
+
+    $employees[$employee['employee_id']]=$employee['name'];
+
+    $total_profit += (($row['sell_price'] - $row['cost'])*$row['quantity']); //sell-cost*quant for true profit
+
+  }
+
+  $properDisplay = number_format($total_profit, 2, '.', ','); //format profit number
+}
+else
+{
+  echo "The following products were match search keyword $_REQUEST[search]";
+  $sql= "SELECT * FROM TECH3740_2020F.Products_mmirkovi 
+         WHERE name LIKE '%$_REQUEST[search]%' OR description 
+         LIKE  '%$_REQUEST[search]%'" ;
+
+  $resultSome = mysqli_query($con,$sql);
+
+  $products = array();
+
+  $vendorList = array();
+
+  $employees = array();
+
+  $total_profit =0.00;
+
+  while ($row = mysqli_fetch_array($resultSome))
+  {
+    $products[] = $row;
+
+    $sqlVendor = "SELECT * from TECH3740.VENDOR where vendor_id=$row[v_id]";
+
+    $resultVendor = mysqli_query($con,$sqlVendor);
+
+    $vendor = mysqli_fetch_assoc($resultVendor);
+
+    $vendorList[$vendor['vendor_id']]=$vendor['name'];
+
+    $sqlEmp = "SELECT * from TECH3740.EMPLOYEE where employee_id=$row[e_id]";
+
+    $resultEmp = mysqli_query($con,$sqlEmp);
+
+    $employee = mysqli_fetch_assoc($resultEmp);
+
+    $employees[$employee['employee_id']]=$employee['name'];
+
+    $total_profit += (($row['sell_price'] - $row['cost'])*$row['quantity']);  //sell-cost*quant for true profit
+
+  }
+
+  $properDisplay = number_format($total_profit, 2, '.', ',');
+
+}
+
+
+
+?>
+<html>
+
+<body>
+  <?php if($user_login):?>
+
+  <table border=1>
+
+  <tr> <!--Build table--->
+
+    <th>ID</th>
+
+    <th>Name</th>
+
+    <th>Description</th>
+
+    <th>Type</th>
+
+    <th>Cost</th>
+
+    <th>Sell price</th>
+
+    <th>Quantity</th>
+
+    <th>Vendor Name</th>
+
+    <th>Added by employee</th>
+
+  </tr>
+
+  <?php foreach($products as $row):?><!--Fill table--->
+
+   <tr>
+
+    <td><?php echo $row['p_id']?></td>
+
+    <td><?php echo $row['name']?></td>
+
+    <td><?php echo $row['description']?></td>
+
+    <td><?php echo $row['type']?></td>
+
+    <td><?php echo $row['cost']?></td>
+
+    <td><?php echo $row['sell_price']?></td>
+
+    <?php if($row['quantity'] < 5): ?>
+
+    <td style="color:red;"><?php echo $row['quantity']?></td> <!---Turn quanity red if condition met--->
+
+    <?php else: ?>
+
+    <td><?php echo $row['quantity']?></td>
+
+    <?php endif ?>
+
+    <td><?php echo $vendorList[$row['v_id']]?></td>
+
+    <td><?php echo $employees[$row['e_id']]?></td>
+
+   </tr>
+
+   <?php endforeach?>
+
+  </table> <!----->
+
+  <p>Total profit: USD <?php echo $properDisplay?></p> <!-- Print proper amount--->
+
+
+  <?php else:?>
+
+    <p>Please Login First</p>
+  <?php endif ?>
+
+</body>
+</html>
+
