@@ -1,0 +1,5 @@
+The purpose of this project was to learn python and then also exploit a vulnerability on my schools server system if people did not change the default password for accounts
+provided by the school. The default password is your 9 digit student ID. After gaining the permission from my school professor I moved forward. The vulnerability which I am
+happy to say has been fixed was that users had unlimited logins with no lockout of time to wait until you could try again. So this enabled me to break my password 
+I changed it to a 8 digit number in a few minutes. I never expanded my test cases due to the fact I would potentially gain access to other materials but I was able to prove my 
+hypothesis that the schools server was vulnerable if someone could get a username and then they would just need time to gain access. 
